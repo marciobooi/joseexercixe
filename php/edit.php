@@ -8,7 +8,31 @@ if($_SESSION["loggedin"] == true) {
 	
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+
 //AddToDB //////////////////////////////////////
+        $SQL = $connection->prepare('UPDATE article set title=:TITLE,description=:DESCRIPTION, img=:IMG where id=:ID');
+        if(!empty($_FILES['image']['tmp_name'])) {
+            //echo "Hello here" . $_FILES['image']['tmp_name'];
+            $FileNameToDB = ProcessUploadedFile($_FILES['image']);
+            $SQL->bindParam(':IMG', $FileNameToDB, PDO::PARAM_STR);
+
+        } else {
+            //echo "Hello here else";
+            $SQL = $connection->prepare('UPDATE article set title=:TITLE,description=:DESCRIPTION where id=:ID');
+
+//            $SQL->bindParam(':IMG', $FileNameToDB, PDO::PARAM_STR);
+
+        }
+
+        $SQL->bindParam(':ID', $_POST['id'], PDO::PARAM_INT);
+        $SQL->bindParam(':TITLE', $_POST['title'], PDO::PARAM_STR);
+        $SQL->bindParam(':DESCRIPTION', $_POST['description'], PDO::PARAM_STR);
+        $SQL -> execute();
+        $updatedb = $SQL->fetchAll();
+
+
+
+
 
 //ProcessFile
 		
@@ -29,7 +53,7 @@ else {
 include 'header.php';
 
 
-$result = GetFromDBWithId($_GET[id],$connection);
+$result = GetFromDBWithId($_GET['id'],$connection);
 var_dump($result);
 ?>
 		<form method="POST" action="edit.php" enctype="multipart/form-data">
@@ -50,6 +74,7 @@ var_dump($result);
 			</div>
 			<div class="form-group cc">
 		    	<button class="btn btn-default" type="submit">Submit</button>
+                <button class="btn btn-default" type="button" onclick="history.back();">Back</button>
 			</div>
 		</form>
 

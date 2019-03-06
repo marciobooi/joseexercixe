@@ -1,9 +1,9 @@
 <?php 
 
-	$db = 'DbWorkExample';
-	$host = 'mysql';
-	$username = 'trainer';
-	$password = 'trainer';
+	$db = 'teste';
+	$host = '127.0.0.1';
+	$username = 'root';
+	$password = '';
 
 
 
@@ -21,7 +21,20 @@ try {
 
 //Function returns an Array with results from DB
 function GetFromDBWithId($Id,$connectionIn) {
-
+	$SQL = $connectionIn->prepare('SELECT * FROM `article` where id = :id');
+	$SQL->bindParam(':id',$Id, PDO::PARAM_INT);
+	$SQL->execute();
+	$SQL->setFetchMode(PDO::FETCH_ASSOC);
+	$result = $SQL->fetchall();
+	return $result;
+}
+function GetFromDB($connectionIn) {
+	$SQL = $connectionIn->prepare('SELECT * FROM `article`');
+	//$SQL->bindParam(':id',$Id, PDO::PARAM_INT);
+	$SQL->execute();
+	$SQL->setFetchMode(PDO::FETCH_ASSOC);
+	$result = $SQL->fetchall();
+	return $result;
 }
 
 

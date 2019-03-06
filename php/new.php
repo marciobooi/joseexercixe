@@ -10,14 +10,18 @@ if($_SESSION["loggedin"] == true) {
 
 
 		//FillIn SQL with the Bind params :TITLE :DESCRIPTION :IMG
-		$SQL = $connection->prepare('');
-		$SQL->bindParam(':TITLE', $_POST[title], PDO::PARAM_STR);
-		$SQL->bindParam(':DESCRIPTION', $_POST[description], PDO::PARAM_STR);
-		
-		if(!empty($_FILES[image])) {
-			$FileNameToDB = ProcessUploadedFile($_FILES[image]);
-			$SQL->bindParam(':IMG', $FileNameToDB, PDO::PARAM_STR);
-		}
+        $SQL = $connection->prepare("INSERT INTO article (title, description, img) VALUES (:TITLE, :DESCRIPTION, :IMG)");
+        if(!empty($_FILES['image'])) {
+            //echo "Hello here" . $_FILES['image']['tmp_name'];
+            $FileNameToDB = ProcessUploadedFile($_FILES['image']);
+            $SQL->bindParam(':IMG', $FileNameToDB, PDO::PARAM_STR);
+
+        }
+        $SQL->bindParam(':TITLE', $_POST['title'], PDO::PARAM_STR);
+        $SQL->bindParam(':DESCRIPTION', $_POST['description'], PDO::PARAM_STR);
+        $SQL -> execute();
+        $updatedb = $SQL->fetchAll();
+
 		
 
 
@@ -56,6 +60,7 @@ include 'header.php';
 			</div>
 			<div class="form-group cc">
 		    	<button class="btn btn-default" type="submit">Submit</button>
+                <button class="btn btn-default" type="button" onclick="history.back();">Back</button>
 			</div>
 		</form>
 
